@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyHashtags = document.getElementById('copyHashtags');
 
     // Gemini API anahtarı
-    const API_KEY = 'YOUR_GEMINI_API_KEY'; // Netlify'da çevre değişkeni olarak ayarlanacak
+    const API_KEY = 'AIzaSyAHGevOsfDUchebvfihC1u7sWK8NMIOyqY'; // Netlify'da çevre değişkeni olarak ayarlanacak
     const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent';
 
     // Fotoğraf yükleme işlemleri
