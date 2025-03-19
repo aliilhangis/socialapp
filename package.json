@@ -1,0 +1,15 @@
+{
+  "name": "instagram-caption-generator",
+  "version": "1.0.0",
+  "description": "Instagram açıklama ve hashtag oluşturucu",
+  "main": "index.js",
+  "scripts": {
+    "start": "netlify dev"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "netlify-cli": "^12.0.0"
+  }
+} 

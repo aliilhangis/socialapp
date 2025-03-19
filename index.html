@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Açıklama Oluşturucu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Instagram Açıklama Oluşturucu</h1>
+            <p>Fotoğrafınızı yükleyin, Instagram algoritmasına uygun açıklama ve hashtag'ler oluşturalım!</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Fotoğrafınızı buraya sürükleyin veya seçin</p>
+                    <input type="file" id="imageUpload" accept="image/*" hidden>
+                    <button id="uploadButton">Fotoğraf Seç</button>
+                </div>
+                <div class="preview-area" id="previewArea">
+                    <img id="imagePreview" src="" alt="Önizleme">
+                    <button id="generateButton" disabled>Açıklama Oluştur</button>
+                    <button id="resetButton">Sıfırla</button>
+                </div>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <div class="loader" id="loader">
+                    <div class="spinner"></div>
+                    <p>Açıklama oluşturuluyor...</p>
+                </div>
+                <div class="result-content" id="resultContent">
+                    <h2>Instagram Açıklamanız</h2>
+                    <div class="caption-box">
+                        <p id="captionText"></p>
+                        <button id="copyCaption"><i class="fas fa-copy"></i> Kopyala</button>
+                    </div>
+                    <h2>Hashtag'ler</h2>
+                    <div class="hashtag-box">
+                        <p id="hashtagText"></p>
+                        <button id="copyHashtags"><i class="fas fa-copy"></i> Kopyala</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2023 Instagram Açıklama Oluşturucu | Yapay Zeka ile Güçlendirilmiştir</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
