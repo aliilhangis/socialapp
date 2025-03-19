@@ -37,7 +37,18 @@ exports.handler = async function(event, context) {
       };
     }
 
+    // API anahtarını çevre değişkeninden al
     const API_KEY = process.env.GEMINI_API_KEY;
+    
+    if (!API_KEY) {
+      console.error('GEMINI_API_KEY çevre değişkeni ayarlanmamış');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'API key is not configured' })
+      };
+    }
+    
     const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent';
 
     const requestData = {
@@ -60,6 +71,8 @@ exports.handler = async function(event, context) {
       }
     };
 
+    console.log('Gemini API isteği gönderiliyor...');
+    
     const response = await fetch(`${API_URL}?key=${API_KEY}`, {
       method: 'POST',
       headers: {
@@ -69,6 +82,18 @@ exports.handler = async function(event, context) {
     });
 
     const responseData = await response.json();
+    
+    if (!response.ok) {
+      console.error('Gemini API hatası:', responseData);
+      return {
+        statusCode: response.status,
+        headers,
+        body: JSON.stringify({ 
+          error: 'API request failed', 
+          details: responseData 
+        })
+      };
+    }
 
     return {
       statusCode: 200,
@@ -80,7 +105,7 @@ exports.handler = async function(event, context) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal Server Error' })
+      body: JSON.stringify({ error: 'Internal Server Error', message: error.message })
     };
   }
 }; 
