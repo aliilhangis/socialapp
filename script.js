@@ -15,9 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyCaption = document.getElementById('copyCaption');
     const copyHashtags = document.getElementById('copyHashtags');
 
-    // Gemini API anahtarı
-    const API_KEY = 'AIzaSyAHGevOsfDUchebvfihC1u7sWK8NMIOyqY'; // Netlify'da çevre değişkeni olarak ayarlanacak
-    const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent';
+    // Netlify fonksiyonuna yönlendirme
+    const API_URL = '/api/generate-caption';
 
     // Fotoğraf yükleme işlemleri
     uploadButton.addEventListener('click', () => {
@@ -99,60 +98,63 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Hata:', error);
-            alert('Açıklama oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
+            
+            // Kullanıcıya daha açıklayıcı hata mesajı göster
+            let errorMessage = 'Açıklama oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.';
+            
+            if (error.message.includes('API anahtarı')) {
+                errorMessage = 'API anahtarı geçersiz veya eksik. Lütfen site yöneticisiyle iletişime geçin.';
+            } else if (error.message.includes('400')) {
+                errorMessage = 'Görsel işlenirken bir sorun oluştu. Lütfen farklı bir görsel deneyin.';
+            } else if (error.message.includes('404')) {
+                errorMessage = 'API servisi bulunamadı. Lütfen site yöneticisiyle iletişime geçin.';
+            } else if (error.message.includes('429')) {
+                errorMessage = 'Çok fazla istek gönderildi. Lütfen biraz bekleyip tekrar deneyin.';
+            }
+            
+            alert(errorMessage);
+            
+            // Hata durumunda sonuç bölümünü gizle
+            resultSection.style.display = 'none';
         } finally {
             loader.style.display = 'none';
         }
     });
 
-    // Gemini API ile açıklama ve hashtag oluşturma
+    // API ile açıklama ve hashtag oluşturma
     async function generateCaptionAndHashtags(imageBase64) {
-        const apiKey = API_KEY;
-        const url = `${API_URL}?key=${apiKey}`;
-
-        const requestData = {
-            contents: [{
-                parts: [
-                    {
-                        text: "Bu fotoğraf için Instagram'da kullanılabilecek, algoritma dostu, en fazla 5 satır uzunluğunda bir açıklama ve en fazla 5 adet ilgili hashtag oluştur. Açıklamayı ve hashtag'leri ayrı ayrı döndür. Türkçe olarak yanıt ver."
-                    },
-                    {
-                        inline_data: {
-                            mime_type: "image/jpeg",
-                            data: imageBase64
-                        }
-                    }
-                ]
-            }],
-            generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 800
-            }
-        };
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        if (!response.ok) {
-            throw new Error(`API hatası: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        if (data.candidates && data.candidates.length > 0) {
-            const text = data.candidates[0].content.parts[0].text;
+        try {
+            console.log('API isteği gönderiliyor:', API_URL);
             
-            // Açıklama ve hashtag'leri ayırma
-            const parts = processApiResponse(text);
-            return parts;
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ imageBase64 })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API hatası: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates.length > 0) {
+                const text = data.candidates[0].content.parts[0].text;
+                
+                // Açıklama ve hashtag'leri ayırma
+                const parts = processApiResponse(text);
+                return parts;
+            } else if (data.error) {
+                throw new Error(`API hatası: ${data.error.message || JSON.stringify(data.error)}`);
+            }
+            
+            return null;
+        } catch (error) {
+            console.error("API İsteği Hatası:", error);
+            throw error;
         }
-        
-        return null;
     }
 
     // API yanıtını işleme
